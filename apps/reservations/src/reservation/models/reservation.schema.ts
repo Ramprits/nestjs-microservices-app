@@ -4,6 +4,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 @Schema({
   timestamps: true,
   versionKey: false,
+  collection: 'reservations',
 })
 export class ReservationDocument extends AbstractDocument {
   @Prop()
