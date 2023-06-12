@@ -1,12 +1,38 @@
+import * as joi from 'joi';
 import { Module } from '@nestjs/common';
 import { DatabaseModule, LoggerModule } from '@app/common';
+import { JwtModule } from '@nestjs/jwt';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from './users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [DatabaseModule, LoggerModule, UsersModule],
+  imports: [
+    DatabaseModule,
+    LoggerModule,
+    UsersModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: joi.object({
+        JWT_SECRET: joi.string().required(),
+        JWT_EXP: joi.string().required(),
+        MONGODB_URI: joi.string().required(),
+      }),
+    }),
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory(config: ConfigService) {
+        return {
+          secret: config.get<string>('JWT_SECRET'),
+          signOptions: {
+            expiresIn: `${config.get('JWT_EXP')}s`,
+          },
+        };
+      },
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService],
 })
