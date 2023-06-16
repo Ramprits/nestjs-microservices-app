@@ -14,6 +14,7 @@ export class UserDocument extends AbstractDocument {
   email: string;
   @Prop({
     required: true,
+    select:false
   })
   password: string;
 

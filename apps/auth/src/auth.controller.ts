@@ -4,7 +4,7 @@ import { Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from '../current-user.decorator';
-import { UserResponse } from './interface';
+import { UserDocument } from './users/models/user.schema';
 
 @Controller()
 export class AuthController {
@@ -12,10 +12,11 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  login(
-    @CurrentUser() user: UserResponse,
+  async login(
+    @CurrentUser() user: UserDocument,
     @Res({ passthrough: true }) response: Response,
   ) {
+    await this.authService.login(user, response);
     response.send(user);
   }
 }

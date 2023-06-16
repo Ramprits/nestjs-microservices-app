@@ -16,7 +16,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     email: string,
     password: string,
   ): Promise<{
-    id: Types.ObjectId;
+    _id: Types.ObjectId;
   }> {
     try {
       return this.userServices.verifyUser(email, password);
